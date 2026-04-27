@@ -89,4 +89,4 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 设计理念
 
-[岩鼠的设计理念:](./intro.md) 
+[点我了解一下岩鼠的设计理念](./intro.md) 
