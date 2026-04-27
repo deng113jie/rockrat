@@ -1,0 +1,23 @@
+{
+  "skill_name": "google-scholar-bib",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Get the BibTeX entry for the paper: 'Massive MIMO for next generation wireless systems'",
+      "expected_output": "A valid BibTeX entry (e.g. @article{...}) with title, author, year, and journal/venue fields, presented in a fenced bibtex code block.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "Fetch the bibtex citation for: 'Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor'",
+      "expected_output": "A valid BibTeX entry for the SAC paper by Haarnoja et al., presented in a fenced bibtex code block.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Find the bibtex for this paper title: 'xyzzy_nonexistent_paper_title_that_does_not_exist_12345'",
+      "expected_output": "A 'No item found' message since the paper does not exist on Google Scholar.",
+      "files": []
+    }
+  ]
+}
