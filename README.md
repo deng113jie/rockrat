@@ -5,7 +5,6 @@ A web-based IDE for orchestrating AI-driven research pipelines using Claude Code
 ![RockRat Main UI](https://github.com/deng113jie/rockrat/blob/master/front_ui.png)
 
 
-
 ## Getting Started
 
 ### 1. Install Node.js
@@ -91,3 +90,7 @@ research-agent-ui/
 
 - 如果需要agent自动使用IEEE Xplore，请1)安装chrome, 2) 在chrome中输入 chrome://inspect/#remote-debugging  启用远程调试， 3）打开IEEE Xplore并登录
 - 有任何问题，可以联系（wx:wayfull001）
+
+## 设计理念
+
+岩鼠的设计理念： [](./intro.md) 
