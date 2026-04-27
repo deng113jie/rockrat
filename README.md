@@ -1,9 +1,12 @@
 # RockRat  岩鼠：舒舒服服做科研 
-![](https://github.com/deng113jie/rockrat/blob/master/icon/rockrat.png)
+
+<img src="https://github.com/deng113jie/rockrat/blob/master/icon/rockrat.png" alt="Cute Dog" width="50" height="50">
 
 A web-based IDE for orchestrating AI-driven research pipelines using Claude Code agents.
 
-![RockRat Main UI](https://github.com/deng113jie/rockrat/blob/master/front_ui.png){width=300 height=200}  
+![RockRat Main UI](https://github.com/deng113jie/rockrat/blob/master/front_ui.png)
+
+
 
 ## Getting Started
 
