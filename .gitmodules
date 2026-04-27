@@ -1,0 +1,3 @@
+[submodule ".claude/skills"]
+	path = .claude/skills
+	url = https://2cf3868ff8789a5c8b33410790af83c02aa9e3a7@git.pcl.ac.cn/dengj/agent_skills.git
