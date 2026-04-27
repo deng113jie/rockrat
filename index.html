@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rock Rat Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <section class="workspace-hub" id="workspace-hub">
+      <div class="workspace-hub__hero">
+        <img src="./icon/rockrat.png" style="height:150px;object-fit:contain;flex-shrink:0" alt="Rock Rat">
+        <div>
+          <div class="workspace-hub__eyebrow">RESEARCH WORKSPACES</div>
+          <h1 class="workspace-hub__title">选择一个 Workspace，继续你的科研工作流</h1>
+          <p class="workspace-hub__subtitle">参考 NotebookLM 的工作区入口体验：先看到自己的全部研究工作区，再按主题进入具体的 Workspace / Pipeline / Review 工作台。</p>
+        </div>
+        <button class="workspace-hub__create" id="workspace-create-btn">＋ 新建 Workspace</button>
+      </div>
+
+      <div class="workspace-hub__toolbar">
+        <!--
+        <div class="workspace-hub__search">
+          <span>🔎</span>
+          <span>搜索 workspace、主题、标签...</span>
+        </div>
+
+        <div class="workspace-hub__filters">
+          <span class="workspace-hub__chip active">All</span>
+          <span class="workspace-hub__chip">Active</span>
+          <span class="workspace-hub__chip">Drafting</span>
+          <span class="workspace-hub__chip">Reviewing</span>
+        </div>
+        -->
+      </div>
+
+      <div class="workspace-hub__grid" id="workspace-hub-grid">
+        <!-- populated dynamically by app.js -->
+      </div>
+
+      <div class="workspace-hub__contributors">
+        Contributors: Wang Ye &nbsp;·&nbsp; Deng Jie &nbsp;·&nbsp; He Rongxiang &nbsp;·&nbsp; Xu Jifei
+      </div>
+    </section>
+
+    <div class="workbench-shell hidden" id="workbench-shell">
+    <!-- ===== TITLE BAR ===== -->
+    <header class="titlebar">
+      <div class="titlebar__left">
+        <div class="titlebar__logo">
+          <img src="./icon/rockrat.png" width="24" height="24" style="object-fit:contain;display:block" alt="Rock Rat">
+        </div>
+        <span class="titlebar__name">Rock Rat Studio</span>
+        <nav class="titlebar__tabs">
+          <button class="tab active" data-view="workspace">Workspace</button>
+          <button class="tab" data-view="pipeline">Pipeline</button>
+        </nav>
+      </div>
+      <div class="titlebar__center">
+        <div class="titlebar__breadcrumb">
+          <span class="breadcrumb__item">Project: Sparse-Attention-Optimization</span>
+          <span class="breadcrumb__sep">/</span>
+          <span class="breadcrumb__item breadcrumb__active">Pipeline: Full Research</span>
+        </div>
+      </div>
+      <div class="titlebar__right">
+        <div class="status-indicator status-indicator--running">
+          <span class="status-dot"></span>
+          <span>3 agents running</span>
+        </div>
+        <button class="icon-btn" title="Settings" id="btn-settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== MAIN LAYOUT ===== -->
+    <div class="main-layout">
+      <!-- ===== ACTIVITY BAR (leftmost icon strip) ===== -->
+      <aside class="activity-bar">
+        <button class="activity-btn active" data-panel="pipeline-nodes" title="Pipeline Nodes">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="12" cy="18" r="3"/>
+            <line x1="8" y1="8" x2="10.5" y2="15.5"/><line x1="16" y1="8" x2="13.5" y2="15.5"/>
+          </svg>
+        </button>
+        <button class="activity-btn" data-panel="tools" title="Agent / Skill / MCP">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+          </svg>
+        </button>
+        <button class="activity-btn" data-panel="search" title="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+        <div class="activity-bar__spacer"></div>
+        <button class="activity-btn" data-panel="account" title="Account">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </button>
+      </aside>
+
+      <!-- ===== SIDEBAR (collapsible) ===== -->
+      <aside class="sidebar" id="sidebar">
+        <!-- Sidebar collapse toggle -->
+        <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle Sidebar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+
+        <!-- Panel: Agent / Skill / MCP -->
+        <div class="sidebar-panel" id="panel-tools">
+          <div class="sidebar-panel__header">
+            <span>Agent / Skill / MCP</span>
+            <button class="icon-btn icon-btn--sm" title="Add Tool">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+
+          <div class="tool-section">
+            <div class="tool-section__header" data-toggle="agents-list">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              <span>Agents</span>
+              <span class="badge">5</span>
+            </div>
+            <div class="tool-section__body" id="agents-list">
+              <div class="tool-item" draggable="true" data-tool-id="outline-agent" data-tool-type="agent">
+                <span class="tool-icon tool-icon--agent">O</span>
+                <div class="tool-item__info">
+                  <span class="tool-item__name">Outline Agent</span>
+                  <span class="tool-item__desc">Generate structured outline</span>
+                </div>
+                <span class="tool-status tool-status--idle">idle</span>
+              </div>
+              <div class="tool-item" draggable="true" data-tool-id="literature-agent" data-tool-type="agent">
+                <span class="tool-icon tool-icon--agent">L</span>
+                <div class="tool-item__info">
+                  <span class="tool-item__name">Literature Review</span>
+                  <span class="tool-item__desc">Search & verify citations</span>
+                </div>
+                <span class="tool-status tool-status--running">running</span>
+              </div>
+              <div class="tool-item" draggable="true" data-tool-id="plotting-agent" data-tool-type="agent">
+                <span class="tool-icon tool-icon--agent">P</span>
+                <div class="tool-item__info">
+                  <span class="tool-item__name">Plotting Agent</span>
+                  <span class="tool-item__desc">Render figures & diagrams</span>
+                </div>
+                <span class="tool-status tool-status--running">running</span>
+              </div>
+              <div class="tool-item" draggable="true" data-tool-id="section-agent" data-tool-type="agent">
+                <span class="tool-icon tool-icon--agent">S</span>
+                <div class="tool-item__info">
+                  <span class="tool-item__name">Section Writer</span>
+                  <span class="tool-item__desc">Draft paper sections</span>
+                </div>
+                <span class="tool-status tool-status--idle">idle</span>
+              </div>
+              <div class="tool-item" draggable="true" data-tool-id="refine-agent" data-tool-type="agent">
+                <span class="tool-icon tool-icon--agent">R</span>
+                <div class="tool-item__info">
+                  <span class="tool-item__name">Refinement</span>
+                  <span class="tool-item__desc">Peer review simulation</span>
+                </div>
+                <span class="tool-status tool-status--idle">idle</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <div class="tool-section__header" data-toggle="skills-list">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              <span>Skills</span>
+              <span class="badge" id="skills-badge">0</span>
+            </div>
+            <div class="tool-section__body" id="skills-list">
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <div class="tool-section__header collapsed" data-toggle="mcp-list">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              <span>MCP Servers</span>
+              <span class="badge">3</span>
+            </div>
+            <div class="tool-section__body collapsed" id="mcp-list">
+              <div class="tool-item" draggable="true" data-tool-id="mcp-mineru" data-tool-type="mcp">
+                <span class="tool-icon tool-icon--mcp">M</span>
+                <div class="tool-item__info">
+                  <span class="tool-item__name">MinerU Parser</span>
+                  <span class="tool-item__desc">PDF extraction</span>
+                </div>
+                <span class="tool-status tool-status--connected">online</span>
+              </div>
+              <div class="tool-item" draggable="true" data-tool-id="mcp-browser" data-tool-type="mcp">
+                <span class="tool-icon tool-icon--mcp">B</span>
+                <div class="tool-item__info">
+                  <span class="tool-item__name">Browser Agent</span>
+                  <span class="tool-item__desc">Web automation</span>
+                </div>
+                <span class="tool-status tool-status--connected">online</span>
+              </div>
+              <div class="tool-item" draggable="true" data-tool-id="mcp-filesystem" data-tool-type="mcp">
+                <span class="tool-icon tool-icon--mcp">F</span>
+                <div class="tool-item__info">
+                  <span class="tool-item__name">Filesystem</span>
+                  <span class="tool-item__desc">Local file I/O</span>
+                </div>
+                <span class="tool-status tool-status--connected">online</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <div class="tool-section__header collapsed" data-toggle="external-list">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              <span>External Agents</span>
+              <span class="badge">2</span>
+            </div>
+            <div class="tool-section__body collapsed" id="external-list">
+              <div class="tool-item" draggable="true" data-tool-id="ext-deepreviewer" data-tool-type="external">
+                <span class="tool-icon tool-icon--external">DR</span>
+                <div class="tool-item__info">
+                  <span class="tool-item__name">DeepReviewer</span>
+                  <span class="tool-item__desc">Paper review service</span>
+                </div>
+              </div>
+              <div class="tool-item" draggable="true" data-tool-id="ext-paperbanana" data-tool-type="external">
+                <span class="tool-icon tool-icon--external">PB</span>
+                <div class="tool-item__info">
+                  <span class="tool-item__name">PaperVizAgent</span>
+                  <span class="tool-item__desc">Illustration generation</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel: Pipeline Nodes -->
+        <div class="sidebar-panel active" id="panel-pipeline-nodes">
+          <div class="sidebar-panel__header"><span>Pipeline Nodes</span></div>
+          <div class="node-palette">
+            <div class="palette-node" draggable="true" data-node-type="investigate" data-asset-target="asset-target-brief">
+              <span class="palette-node__icon" style="--accent:#00d4aa">&#9673;</span><span>知识库</span>
+            </div>
+            <div class="palette-node" draggable="true" data-node-type="idea" data-asset-target="asset-target-topics">
+              <span class="palette-node__icon" style="--accent:#00d4aa">&#9673;</span><span>创新点</span>
+            </div>
+            <div class="palette-node" draggable="true" data-node-type="evaluate" data-asset-target="asset-target-plan">
+              <span class="palette-node__icon" style="--accent:#f0b429">&#9881;</span><span>研究方案</span>
+            </div>
+            <div class="palette-node" draggable="true" data-node-type="implementation" data-asset-target="asset-target-code">
+              <span class="palette-node__icon" style="--accent:#f0b429">&#9673;</span><span>代码实现</span>
+            </div>
+            <div class="palette-node" draggable="true" data-node-type="write" data-asset-target="asset-target-writing">
+              <span class="palette-node__icon" style="--accent:#f06292">&#9673;</span><span>写作成文</span>
+            </div>
+            <div class="palette-node" draggable="true" data-node-type="review" data-asset-target="asset-target-review">
+              <span class="palette-node__icon" style="--accent:#ff8a65">&#9673;</span><span>AI审稿</span>
+            </div>
+            <div class="palette-node" draggable="true" data-node-type="human-gate" data-asset-target="asset-target-approval">
+              <span class="palette-node__icon" style="--accent:#ffd600">&#9632;</span><span>人工审核</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel: Search -->
+        <div class="sidebar-panel" id="panel-search">
+          <div class="sidebar-panel__header"><span>Search</span></div>
+          <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search tools, nodes, logs..." />
+            <button id="search-btn" class="search-btn">Search</button>
+          </div>
+          <div id="search-results" class="search-results"></div>
+        </div>
+
+        <!-- Panel: Account -->
+        <div class="sidebar-panel" id="panel-account">
+          <div class="sidebar-panel__header"><span>Account</span></div>
+          <div class="account-info">
+            <div class="account-avatar">Y</div>
+            <div><div class="account-name">Researcher</div><div class="account-plan">Pro Plan</div></div>
+          </div>
+        </div>
+      </aside>
+      <div class="resize-handle" id="sidebar-resizer"></div>
+
+      <!-- ===== RIGHT COLUMN: Editor + Bottom Panel ===== -->
+      <div class="main-layout__right">
+
+      <!-- ===== CENTER: MAIN EDITOR AREA ===== -->
+      <main class="editor-area">
+        <div class="pipeline-layout" id="pipeline-layout">
+          <div class="editor-views">
+
+        <!-- ========== View: Workspace (1st tab, default active) ========== -->
+        <section class="view active" id="view-workspace">
+          <div class="workspace-dashboard">
+            <div class="workspace-dashboard__hero">
+              <div>
+                <div class="workspace-dashboard__eyebrow">RESEARCH MATERIAL WORKSPACE</div>
+                <h2 class="workspace-dashboard__title">Sparse Attention Optimization / 研究前置备料区</h2>
+                <p class="workspace-dashboard__subtitle">这里不是结果审查页，而是科研流程启动前的资产装配区：集中管理研究主题说明、文献与引用库、方法设计、实验配置、数据资源、草稿骨架、风险缺口与启动条件。</p>
+              </div>
+              <div class="workspace-dashboard__hero-actions">
+              </div>
+            </div>
+
+            <div class="workspace-dashboard__body">
+              <div class="workspace-main-column">
+                <section class="workspace-card workspace-card--hero" id="asset-target-brief">
+                  <div class="workspace-card__header">
+                    <span class="workspace-card__icon" style="color:#00d4aa">&#129504;</span>
+                    <span>知识库</span>
+                    <div class="workspace-card__header-actions">
+                      <button class="paper-action-btn" id="paper-add-btn" type="button">增加文献</button>
+                      <button class="paper-action-btn paper-action-btn--primary" id="paper-learn-btn" type="button">开始调研</button>
+                    </div>
+                  </div>
+                  <div class="workspace-card__body">
+                    <div class="paper-list-intro" style="white-space: pre-line">本地 `papers` 目录中的 PDF、.m、.py 文件（含子目录）以树状显示，双击打开，勾选后可批量进入学习流程。
+                      如果需要自动检索IEEE Xplore,请确保 1)已打开Chrome浏览器, 2）启用调试chrome://inspect/#remote-debugging，3）勾选左侧ieee-search的Skill， 4）可以登陆IEEE数据库
+                    </div>
+                    <ul class="paper-file-list" id="paper-file-list"></ul>
+                  </div>
+                </section>
+                <section class="workspace-card" id="asset-target-topics">
+                  <div class="workspace-card__header">
+                    <span class="workspace-card__icon" style="color:#ffd166">&#128161;</span>
+                    <span>创新点</span>
+                    <div class="workspace-card__header-actions">
+                      <button class="paper-action-btn" id="ideas-load-btn" type="button">显示创新点</button>
+                      <button class="paper-action-btn paper-action-btn--primary" id="ideas-generate-btn" type="button">生成创新点</button>
+                    </div>
+                  </div>
+                  <div class="workspace-card__body">
+                    <div class="workspace-topic-candidates__intro">这里不只是静态候选列表，而是用户与系统围绕选题做收敛决策的区域。系统会结合材料分析自动提案，用户也可以手动指定方向，最终通过比较和取舍选定一个进入 Pipeline。</div>
+                    <div class="workspace-topic-candidates">
+                      <article class="workspace-topic-card featured selected">
+                        <div class="workspace-topic-card__header">
+                          <div>
+                            <h4 class="workspace-topic-card__title">主题 1 · 面向长上下文科研 Agent 的稀疏注意力系统优化</h4>
+                            <div class="workspace-topic-card__subtitle">系统主动建议 · 系统优化 / 工程实证 / 最贴合现有材料</div>
+                          </div>
+                          <div class="workspace-topic-card__aside">
+                            <button class="workspace-topic-card__adopt-btn" type="button">采纳</button>
+                            <span class="workspace-topic-card__score">推荐度 92</span>
+                          </div>
+                        </div>
+                        <div class="workspace-topic-card__summary">聚焦"速度-质量"权衡，以 Agent 工作流为真实应用场景，强调系统吞吐提升与任务质量保持，最适合直接转化为投稿级论文。</div>
+                      </article>
+
+                      <article class="workspace-topic-card">
+                        <div class="workspace-topic-card__header">
+                          <div>
+                            <h4 class="workspace-topic-card__title">主题 2 · 稀疏注意力策略对科研 Agent 引用质量的影响评估</h4>
+                            <div class="workspace-topic-card__subtitle">系统主动建议 · Benchmark / 评估导向 / 引用质量分析</div>
+                          </div>
+                          <div class="workspace-topic-card__aside">
+                            <button class="workspace-topic-card__adopt-btn" type="button">采纳</button>
+                            <span class="workspace-topic-card__score">推荐度 84</span>
+                          </div>
+                        </div>
+                        <div class="workspace-topic-card__summary">强调 citation-F1、baseline 对比和 long-context 任务质量评测，适合写成一篇偏 benchmark / evaluation 的论文。</div>
+                      </article>
+
+                      <article class="workspace-topic-card">
+                        <div class="workspace-topic-card__header">
+                          <div>
+                            <h4 class="workspace-topic-card__title">主题 3 · 科研工作流中动态稀疏率调度的 Agent 自适应机制</h4>
+                            <div class="workspace-topic-card__subtitle">用户指定方向 · 方法创新 / 动态策略 / 更偏研究性</div>
+                          </div>
+                          <div class="workspace-topic-card__aside">
+                            <button class="workspace-topic-card__adopt-btn" type="button">采纳</button>
+                            <span class="workspace-topic-card__score">推荐度 77</span>
+                          </div>
+                        </div>
+                        <div class="workspace-topic-card__summary">从固定稀疏率进一步提升为动态调度策略，突出方法创新性，但需要更多 ablation 和复杂度论证支撑。</div>
+                      </article>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="workspace-grid workspace-grid--two">
+                </section>
+
+                <section class="workspace-card" id="asset-target-plan">
+                  <div class="workspace-card__header">
+                    <span class="workspace-card__icon" style="color:#f0b429">&#9881;</span>
+                    <span>研究方案</span>
+                  </div>
+                  <div class="workspace-card__body">
+                    <p class="workspace-card__placeholder">研究方案尚未生成。节点运行后，方法设计、实验配置与研究假设将呈现于此。</p>
+                  </div>
+                </section>
+
+                <section class="workspace-card" id="asset-target-code">
+                  <div class="workspace-card__header">
+                    <span class="workspace-card__icon" style="color:#f0b429">&#128187;</span>
+                    <span>代码实现</span>
+                    <div class="workspace-card__header-actions">
+                      <button class="paper-action-btn paper-action-btn--primary" id="start-coding-btn" type="button">开始进行编程</button>
+                    </div>
+                  </div>
+
+                  <div class="workspace-card__body">
+                    <p class="workspace-card__placeholder">代码实现节点尚未启动。运行后，生成的代码文件、模块结构与版本记录将同步到这里。</p>
+                  </div>
+                </section>
+
+                <section class="workspace-card" id="asset-target-writing">
+                  <div class="workspace-card__header">
+                    <span class="workspace-card__icon" style="color:#f06292">&#9998;</span>
+                    <span>写作成文</span>
+                    <div class="workspace-card__header-actions">
+                      <button class="paper-action-btn" id="add-chapter-btn" type="button">增加章节</button>
+                      <button class="paper-action-btn paper-action-btn--primary" id="generate-pdf-btn" type="button">生成全文</button>
+                    </div>
+                  </div>
+                  <div class="workspace-card__body">
+                    <p class="workspace-card__placeholder">写作节点尚未启动。草稿章节、LaTeX 片段与修改历史将在节点产出后显示于此。</p>
+                  </div>
+                </section>
+
+                <section class="workspace-card" id="asset-target-review">
+                  <div class="workspace-card__header">
+                    <span class="workspace-card__icon" style="color:#ff8a65">&#129302;</span>
+                    <span>AI审稿</span>
+                    <div class="workspace-card__header-actions">
+                      <button class="paper-action-btn paper-action-btn--primary" id="ai-review-btn" type="button">开始审稿</button>
+                    </div>
+                  </div>
+                  <div class="workspace-card__body">
+                    <p class="workspace-card__placeholder">AI 审稿节点尚未运行。审稿意见、评分与修改建议将在完成后汇总于此。</p>
+                  </div>
+                </section>
+
+                <section class="workspace-card" id="asset-target-approval">
+                  <div class="workspace-card__header">
+                    <span class="workspace-card__icon" style="color:#ffd600">&#9632;</span>
+                    <span>人工审核</span>
+                    <div class="workspace-card__header-actions">
+                      <button class="paper-action-btn paper-action-btn--primary" id="improve-btn" type="button">持续改进</button>
+                    </div>
+                  </div>
+                  <div class="workspace-card__body">
+                    <p class="workspace-card__placeholder">等待作者审批。草稿定稿后，关键决策点与审批记录将呈现于此。</p>
+                  </div>
+                </section>
+
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== View: Pipeline (2nd tab) ========== -->
+        <section class="view" id="view-pipeline">
+          <div class="pipeline-main-column">
+            <div class="pipeline-stage-area">
+              <div class="pipeline-stage-header">
+                <div>
+                  <div class="pipeline-stage-header__title">Research Pipeline</div>
+                  <div class="pipeline-stage-header__subtitle">节点产出会自动同步到右侧对话区，用户反馈后可驱动单节点重跑</div>
+                </div>
+                <div class="pipeline-stage-header__stats">
+                  <div class="pipeline-zoom-controls">
+                    <button class="pipeline-zoom-btn" id="pipeline-zoom-out" title="缩小">－</button>
+                    <span class="pipeline-zoom-value" id="pipeline-zoom-value">100%</span>
+                    <button class="pipeline-zoom-btn" id="pipeline-zoom-in" title="放大">＋</button>
+                    <button class="pipeline-zoom-btn" id="pipeline-zoom-reset" title="重置缩放">重置</button>
+                  </div>
+                  <span class="pipeline-stage-chip is-ready">2 个结果待确认</span>
+                  <span class="pipeline-stage-chip is-running">2 个节点运行中</span>
+                </div>
+              </div>
+
+              <div class="pipeline-canvas" id="pipeline-canvas">
+                <div class="pipeline-canvas-inner" id="pipeline-canvas-inner">
+                <svg class="pipeline-edges" id="pipeline-edges"></svg>
+
+                <div class="pipeline-node pipeline-node--investigate result-ready" id="node-1" data-node-title="Literature Survey" data-node-agent="Literature Review Agent" data-node-status="done" style="left:220px;top:40px">
+                  <div class="pipeline-node__header">
+                    <span class="pipeline-node__type">INVESTIGATE</span>
+                    <span class="pipeline-node__status pipeline-node__status--done">&#10003;</span>
+                  </div>
+                  <div class="pipeline-node__title">Literature Survey</div>
+                  <div class="pipeline-node__meta">Literature Review Agent</div>
+                  <div class="pipeline-node__hint">39 篇文献已整理，等待作者确认是否补充特定方向</div>
+                  <div class="pipeline-node__ports">
+                    <div class="port port--out" data-port="out-1"></div>
+                  </div>
+                </div>
+
+                <div class="pipeline-node pipeline-node--evaluate result-ready" id="node-2" data-node-title="Hypothesis Assessment" data-node-agent="Baseline Scout + Q&A Engine" data-node-status="done" style="left:220px;top:220px">
+                  <div class="pipeline-node__header">
+                    <span class="pipeline-node__type">EVALUATE</span>
+                    <span class="pipeline-node__status pipeline-node__status--done">&#10003;</span>
+                  </div>
+                  <div class="pipeline-node__title">Hypothesis Assessment</div>
+                  <div class="pipeline-node__meta">Baseline Scout + Q&A Engine</div>
+                  <div class="pipeline-node__hint">发现 3 个缺失 baseline，可请求追加深挖</div>
+                  <div class="pipeline-node__ports">
+                    <div class="port port--in" data-port="in-2"></div>
+                    <div class="port port--out" data-port="out-2"></div>
+                  </div>
+                </div>
+
+                <div class="pipeline-node pipeline-node--parallel" id="node-fork" data-node-title="Parallel Fork" data-node-agent="Orchestrator" data-node-status="running" style="left:220px;top:390px">
+                  <div class="pipeline-node__header">
+                    <span class="pipeline-node__type">PARALLEL</span>
+                    <span class="pipeline-node__status pipeline-node__status--active">&#9654;</span>
+                  </div>
+                  <div class="pipeline-node__title">Fork</div>
+                  <div class="pipeline-node__meta">Orchestrator</div>
+                  <div class="pipeline-node__hint">实验与绘图分支并行执行中</div>
+                  <div class="pipeline-node__ports">
+                    <div class="port port--in" data-port="in-fork"></div>
+                    <div class="port port--out" data-port="out-fork-a"></div>
+                    <div class="port port--out" data-port="out-fork-b"></div>
+                  </div>
+                </div>
+
+                <div class="pipeline-node pipeline-node--experiment running-node" id="node-3a" data-node-title="Run Ablations" data-node-agent="Coding Agent" data-node-status="running" style="left:120px;top:550px">
+                  <div class="pipeline-node__header">
+                    <span class="pipeline-node__type">EXPERIMENT</span>
+                    <span class="pipeline-node__status pipeline-node__status--active">&#9654;</span>
+                  </div>
+                  <div class="pipeline-node__title">Run Ablations</div>
+                  <div class="pipeline-node__meta">Coding Agent</div>
+                  <div class="pipeline-node__hint">ratio=0.9 正在运行，可提前给出调参反馈</div>
+                  <div class="pipeline-node__ports">
+                    <div class="port port--in" data-port="in-3a"></div>
+                    <div class="port port--out" data-port="out-3a"></div>
+                  </div>
+                </div>
+
+                <div class="pipeline-node pipeline-node--experiment running-node" id="node-3b" data-node-title="Generate Figures" data-node-agent="Plotting Agent" data-node-status="running" style="left:380px;top:550px">
+                  <div class="pipeline-node__header">
+                    <span class="pipeline-node__type">EXPERIMENT</span>
+                    <span class="pipeline-node__status pipeline-node__status--active">&#9654;</span>
+                  </div>
+                  <div class="pipeline-node__title">Generate Figures</div>
+                  <div class="pipeline-node__meta">Plotting Agent</div>
+                  <div class="pipeline-node__hint">2/4 figures 完成，当前进入 critic round 2</div>
+                  <div class="pipeline-node__ports">
+                    <div class="port port--in" data-port="in-3b"></div>
+                    <div class="port port--out" data-port="out-3b"></div>
+                  </div>
+                </div>
+
+                <div class="pipeline-node pipeline-node--merge" id="node-merge" data-node-title="Merge Join" data-node-agent="Orchestrator" data-node-status="pending" style="left:220px;top:760px">
+                  <div class="pipeline-node__header">
+                    <span class="pipeline-node__type">MERGE</span>
+                    <span class="pipeline-node__status pipeline-node__status--pending">&#9679;</span>
+                  </div>
+                  <div class="pipeline-node__title">Join</div>
+                  <div class="pipeline-node__meta">Orchestrator</div>
+                  <div class="pipeline-node__hint">等待两条实验分支汇合</div>
+                  <div class="pipeline-node__ports">
+                    <div class="port port--in" data-port="in-merge-a"></div>
+                    <div class="port port--in" data-port="in-merge-b"></div>
+                    <div class="port port--out" data-port="out-merge"></div>
+                  </div>
+                </div>
+
+                <div class="pipeline-node pipeline-node--write" id="node-4" data-node-title="Draft Paper" data-node-agent="Section Writer + LaTeX" data-node-status="pending" style="left:220px;top:920px">
+                  <div class="pipeline-node__header">
+                    <span class="pipeline-node__type">WRITE</span>
+                    <span class="pipeline-node__status pipeline-node__status--pending">&#9679;</span>
+                  </div>
+                  <div class="pipeline-node__title">Draft Paper</div>
+                  <div class="pipeline-node__meta">Section Writer + LaTeX</div>
+                  <div class="pipeline-node__hint">等待实验结果与图表输入</div>
+                  <div class="pipeline-node__ports">
+                    <div class="port port--in" data-port="in-4"></div>
+                    <div class="port port--out" data-port="out-4"></div>
+                  </div>
+                </div>
+
+                <div class="pipeline-node pipeline-node--human-gate" id="node-gate" data-node-title="Author Approval" data-node-agent="Human Gate" data-node-status="pending" style="left:220px;top:1080px">
+                  <div class="pipeline-node__header">
+                    <span class="pipeline-node__type">HUMAN GATE</span>
+                    <span class="pipeline-node__status pipeline-node__status--pending">&#9679;</span>
+                  </div>
+                  <div class="pipeline-node__title">Author Approval</div>
+                  <div class="pipeline-node__meta">Human Gate</div>
+                  <div class="pipeline-node__hint">草稿生成后需要作者审批</div>
+                  <div class="pipeline-node__ports">
+                    <div class="port port--in" data-port="in-gate"></div>
+                    <div class="port port--out" data-port="out-gate"></div>
+                  </div>
+                </div>
+
+                <div class="pipeline-node pipeline-node--review" id="node-5" data-node-title="Refinement" data-node-agent="Content Refinement Agent" data-node-status="pending" style="left:220px;top:1240px">
+                  <div class="pipeline-node__header">
+                    <span class="pipeline-node__type">REVIEW</span>
+                    <span class="pipeline-node__status pipeline-node__status--pending">&#9679;</span>
+                  </div>
+                  <div class="pipeline-node__title">Refinement</div>
+                  <div class="pipeline-node__meta">Content Refinement Agent</div>
+                  <div class="pipeline-node__hint">等待作者审批后进入精修</div>
+                  <div class="pipeline-node__ports">
+                    <div class="port port--in" data-port="in-5"></div>
+                  </div>
+                </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bottom-panel" id="bottom-panel">
+              <div class="bottom-panel__tabs">
+                <button class="bottom-tab active" data-bottom="monitor">Execution Monitor</button>
+                <button class="bottom-tab" data-bottom="logs">Logs</button>
+                <button class="bottom-tab" data-bottom="terminal">Terminal</button>
+                <div class="bottom-panel__resize"></div>
+              </div>
+              <div class="bottom-panel__content">
+                <div class="bottom-section active" id="bottom-monitor">
+                  <div class="execution-overview" id="execution-overview">
+                    <div class="execution-monitor__header-row">
+                      <span>Pipeline Overview</span>
+                      <span>未选中节点 · 展示全流程概况</span>
+                    </div>
+                    <div class="execution-overview__grid">
+                      <div class="overview-node-card done" data-monitor-node="node-1">
+                        <div class="overview-node-card__top">
+                          <strong>Literature Survey</strong>
+                          <span>done</span>
+                        </div>
+                        <div class="overview-node-card__meta">Literature Review Agent</div>
+                        <div class="overview-node-card__summary">39 篇引用已验证，Intro / Related Work 资产已就绪。</div>
+                        <div class="overview-node-card__stats">
+                          <span>4 subtasks</span>
+                          <span>87.2s</span>
+                        </div>
+                      </div>
+                      <div class="overview-node-card done" data-monitor-node="node-2">
+                        <div class="overview-node-card__top">
+                          <strong>Hypothesis Assessment</strong>
+                          <span>done</span>
+                        </div>
+                        <div class="overview-node-card__meta">Baseline Scout + Q&A</div>
+                        <div class="overview-node-card__summary">补回 3 个 baseline，关键声明完成外部验证。</div>
+                        <div class="overview-node-card__stats">
+                          <span>4 subtasks</span>
+                          <span>34.5s</span>
+                        </div>
+                      </div>
+                      <div class="overview-node-card running" data-monitor-node="node-3a">
+                        <div class="overview-node-card__top">
+                          <strong>Run Ablations</strong>
+                          <span>running</span>
+                        </div>
+                        <div class="overview-node-card__meta">Coding Agent</div>
+                        <div class="overview-node-card__summary">当前执行 ratio=0.9，PPL / citation-F1 正在回写。</div>
+                        <div class="overview-node-card__stats">
+                          <span>3/5 tasks</span>
+                          <span>in-flight</span>
+                        </div>
+                      </div>
+                      <div class="overview-node-card running" data-monitor-node="node-3b">
+                        <div class="overview-node-card__top">
+                          <strong>Generate Figures</strong>
+                          <span>running</span>
+                        </div>
+                        <div class="overview-node-card__meta">Plotting Agent</div>
+                        <div class="overview-node-card__summary">图 2 进入 critic round 2，其余 2 张图已通过。</div>
+                        <div class="overview-node-card__stats">
+                          <span>2/4 figures</span>
+                          <span>45.1s</span>
+                        </div>
+                      </div>
+                      <div class="overview-node-card pending" data-monitor-node="node-4">
+                        <div class="overview-node-card__top">
+                          <strong>Draft Paper</strong>
+                          <span>queued</span>
+                        </div>
+                        <div class="overview-node-card__meta">Section Writer + LaTeX</div>
+                        <div class="overview-node-card__summary">等待实验聚合完成后生成 v7 草稿。</div>
+                        <div class="overview-node-card__stats">
+                          <span>0/4 tasks</span>
+                          <span>waiting</span>
+                        </div>
+                      </div>
+                      <div class="overview-node-card pending" data-monitor-node="node-5">
+                        <div class="overview-node-card__top">
+                          <strong>Refinement</strong>
+                          <span>queued</span>
+                        </div>
+                        <div class="overview-node-card__meta">Content Refinement Agent</div>
+                        <div class="overview-node-card__summary">等待作者审批后执行多轮审稿式精修。</div>
+                        <div class="overview-node-card__stats">
+                          <span>0/3 tasks</span>
+                          <span>waiting</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="execution-monitor">
+                    <div class="execution-monitor__tree">
+                      <div class="execution-monitor__header-row">
+                        <span>Task Tree</span>
+                        <span>Current node: Generate Figures</span>
+                      </div>
+
+                      <div class="task-group done">
+                        <div class="task-group__header">
+                          <div>
+                            <span class="task-group__status"></span>
+                            <strong>Task Group A · Research Framing</strong>
+                          </div>
+                          <span class="task-group__meta">done · 2/2</span>
+                        </div>
+                        <div class="task-subtask done">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">A1 · Problem definition</div>
+                            <div class="task-subtask__desc">梳理问题边界、贡献目标与目标 venue 约束</div>
+                          </div>
+                          <span class="task-subtask__meta">12.4s</span>
+                        </div>
+                        <div class="task-subtask done">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">A2 · Outline synthesis</div>
+                            <div class="task-subtask__desc">生成 5 段式大纲与 section priorities</div>
+                          </div>
+                          <span class="task-subtask__meta">done</span>
+                        </div>
+                      </div>
+
+                      <div class="task-group done">
+                        <div class="task-group__header">
+                          <div>
+                            <span class="task-group__status"></span>
+                            <strong>Task Group B · Literature & Validation</strong>
+                          </div>
+                          <span class="task-group__meta">done · 4/4</span>
+                        </div>
+                        <div class="task-subtask done">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">B1 · Candidate retrieval</div>
+                            <div class="task-subtask__desc">Semantic Scholar / Exa 收集候选文献</div>
+                          </div>
+                          <span class="task-subtask__meta">47 hits</span>
+                        </div>
+                        <div class="task-subtask done">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">B2 · Verification</div>
+                            <div class="task-subtask__desc">Levenshtein 去重与 citation verification</div>
+                          </div>
+                          <span class="task-subtask__meta">39 valid</span>
+                        </div>
+                        <div class="task-subtask done">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">B3 · Missing baseline audit</div>
+                            <div class="task-subtask__desc">补齐 ScissorHands / H2O / Dynamic Token Pruning</div>
+                          </div>
+                          <span class="task-subtask__meta">3 rescued</span>
+                        </div>
+                        <div class="task-subtask done">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">B4 · Intro + Related Work draft</div>
+                            <div class="task-subtask__desc">形成可用于写作节点的综述素材</div>
+                          </div>
+                          <span class="task-subtask__meta">ready</span>
+                        </div>
+                      </div>
+
+                      <div class="task-group running">
+                        <div class="task-group__header">
+                          <div>
+                            <span class="task-group__status"></span>
+                            <strong>Task Group C · Experiment & Figure Production</strong>
+                          </div>
+                          <span class="task-group__meta">running · 2/5</span>
+                        </div>
+                        <div class="task-subtask done">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">C1 · Ablation schedule build</div>
+                            <div class="task-subtask__desc">生成稀疏率实验矩阵与 seed 配置</div>
+                          </div>
+                          <span class="task-subtask__meta">done</span>
+                        </div>
+                        <div class="task-subtask running expanded">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">C2 · Figure generation workflow</div>
+                            <div class="task-subtask__desc">Retriever → Planner → Stylist → Visualizer → Critic 多轮迭代</div>
+                            <div class="task-subtask__children">
+                              <div class="task-leaf done">C2.1 检索 3 张参考图</div>
+                              <div class="task-leaf done">C2.2 生成 4 条图示描述</div>
+                              <div class="task-leaf running">C2.3 渲染图 2，并进入 critic round 2</div>
+                              <div class="task-leaf pending">C2.4 输出最终 SVG/PNG 资源</div>
+                            </div>
+                          </div>
+                          <span class="task-subtask__meta">45.1s</span>
+                        </div>
+                        <div class="task-subtask running">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">C3 · Ablation execution</div>
+                            <div class="task-subtask__desc">ratio=0.9 运行中，citation-F1 与 PPL 同步记录</div>
+                          </div>
+                          <span class="task-subtask__meta">in-flight</span>
+                        </div>
+                        <div class="task-subtask pending">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">C4 · Merge metrics</div>
+                            <div class="task-subtask__desc">聚合 runs / figures / notes 供写作节点消费</div>
+                          </div>
+                          <span class="task-subtask__meta">queued</span>
+                        </div>
+                      </div>
+
+                      <div class="task-group pending">
+                        <div class="task-group__header">
+                          <div>
+                            <span class="task-group__status"></span>
+                            <strong>Task Group D · Draft & Review</strong>
+                          </div>
+                          <span class="task-group__meta">pending · 0/4</span>
+                        </div>
+                        <div class="task-subtask pending">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">D1 · Section writing</div>
+                            <div class="task-subtask__desc">把实验结果、图表、综述资产拼接成稿</div>
+                          </div>
+                          <span class="task-subtask__meta">waiting</span>
+                        </div>
+                        <div class="task-subtask pending">
+                          <span class="task-subtask__bullet"></span>
+                          <div>
+                            <div class="task-subtask__title">D2 · Human gate</div>
+                            <div class="task-subtask__desc">作者确认是否继续进入 refinement</div>
+                          </div>
+                          <span class="task-subtask__meta">waiting</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="execution-monitor__detail">
+                      <div class="execution-monitor__header-row">
+                        <span>Active Task Detail</span>
+                        <span>Task C2.3</span>
+                      </div>
+                      <div class="active-task-card">
+                        <div class="active-task-card__top">
+                          <div>
+                            <div class="active-task-card__title">C2.3 · Visualizer rendering for Figure 2</div>
+                            <div class="active-task-card__subtitle">Plotting Agent · running · dependent on Planner / Stylist outputs</div>
+                          </div>
+                          <span class="active-task-pill">running</span>
+                        </div>
+
+                        <div class="active-task-progress">
+                          <div class="active-task-progress__row"><span>Current progress</span><strong>68%</strong></div>
+                          <div class="active-task-progress__bar"><div style="width:68%"></div></div>
+                        </div>
+
+                        <div class="active-task-grid">
+                          <div class="active-task-metric"><span>Elapsed</span><strong>45.1s</strong></div>
+                          <div class="active-task-metric"><span>Critic round</span><strong>2 / 3</strong></div>
+                          <div class="active-task-metric"><span>Generated candidates</span><strong>4</strong></div>
+                          <div class="active-task-metric"><span>Current best score</span><strong>0.82</strong></div>
+                        </div>
+
+                        <div class="active-task-block">
+                          <div class="active-task-block__label">Task Breakdown</div>
+                          <div class="active-task-breakdown">
+                            <div class="active-task-breakdown__item done">1. Load three reference figures from NeurIPS 2024 corpus</div>
+                            <div class="active-task-breakdown__item done">2. Extract common visual motifs and synthesize style hints</div>
+                            <div class="active-task-breakdown__item running">3. Render candidate B with larger label spacing and simplified legend</div>
+                            <div class="active-task-breakdown__item pending">4. Pass to critic for readability / fidelity re-score</div>
+                          </div>
+                        </div>
+
+                        <div class="active-task-block">
+                          <div class="active-task-block__label">Live Execution Detail</div>
+                          <div class="active-task-log">
+                            <div class="active-task-log__line"><span>14:25:27</span><span>Critic round 1 score = 0.74, issue: dense caption layout</span></div>
+                            <div class="active-task-log__line"><span>14:25:41</span><span>Planner injected revision hint: separate model path and routing path</span></div>
+                            <div class="active-task-log__line active"><span>14:26:03</span><span>Visualizer rendering candidate B with horizontal alignment and larger spacing...</span></div>
+                          </div>
+                        </div>
+
+                        <div class="active-task-block">
+                          <div class="active-task-block__label">Tool Chain</div>
+                          <div class="tool-chain expanded">
+                            <span class="tool-call">Retriever → 3 refs</span>
+                            <span class="tool-call">Planner → 4 prompts</span>
+                            <span class="tool-call">Stylist → style pack v2</span>
+                            <span class="tool-call tool-call--active">Visualizer → candidate B</span>
+                            <span class="tool-call">Critic → pending</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bottom-section" id="bottom-logs">
+                  <div class="log-viewer">
+                    <div class="log-line"><span class="log-ts">14:23:01</span><span class="log-level log-level--info">INFO</span> Pipeline started: Full Research</div>
+                    <div class="log-line"><span class="log-ts">14:23:01</span><span class="log-level log-level--info">INFO</span> Outline Agent invoked</div>
+                    <div class="log-line"><span class="log-ts">14:23:13</span><span class="log-level log-level--ok">DONE</span> Outline Agent completed in 12.4s</div>
+                    <div class="log-line"><span class="log-ts">14:23:14</span><span class="log-level log-level--info">INFO</span> Literature Review Agent invoked</div>
+                    <div class="log-line"><span class="log-ts">14:23:18</span><span class="log-level log-level--info">INFO</span> [Semantic Scholar] Query: "sparse attention long context"</div>
+                    <div class="log-line"><span class="log-ts">14:23:22</span><span class="log-level log-level--info">INFO</span> [Semantic Scholar] 47 candidates found</div>
+                    <div class="log-line"><span class="log-ts">14:24:41</span><span class="log-level log-level--ok">DONE</span> Literature Review Agent completed in 87.2s</div>
+                    <div class="log-line"><span class="log-ts">14:24:42</span><span class="log-level log-level--info">INFO</span> Plotting Agent invoked (parallel)</div>
+                    <div class="log-line"><span class="log-ts">14:24:42</span><span class="log-level log-level--info">INFO</span> Experiment Agent invoked (parallel)</div>
+                    <div class="log-line"><span class="log-ts">14:25:27</span><span class="log-level log-level--warn">WARN</span> [Plotting] Critic round 1: readability below threshold, regenerating...</div>
+                  </div>
+                </div>
+                <div class="bottom-section" id="bottom-terminal">
+                  <div class="terminal-viewer">
+                    <div class="terminal-line">$ research-agent pipeline run --config ./workspace/pipeline.yaml</div>
+                    <div class="terminal-line terminal-line--output">[Pipeline] Loading configuration... OK</div>
+                    <div class="terminal-line terminal-line--output">[Pipeline] 5 stages, 2 parallel branches</div>
+                    <div class="terminal-line terminal-line--output">[Stage 1/5] Investigate ... &#10003; done</div>
+                    <div class="terminal-line terminal-line--output">[Stage 2/5] Evaluate ... &#10003; done</div>
+                    <div class="terminal-line terminal-line--output">[Stage 3/5] Experiment (branch A) ... &#9654; running</div>
+                    <div class="terminal-line terminal-line--output">[Stage 3/5] Experiment (branch B) ... &#9654; running</div>
+                    <div class="terminal-line terminal-cursor">$ </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        </div>
+        <div class="resize-handle" id="pipeline-resizer"></div>
+
+        <aside class="pipeline-feedback" id="pipeline-feedback">
+          <div class="pipeline-feedback__header">
+            <div class="pipeline-feedback__header-text">
+              <div class="pipeline-feedback__title">节点结果对话区</div>
+              <div class="pipeline-feedback__subtitle">系统会把节点产出推送到这里，用户反馈后可触发该节点重新调整并再运行</div>
+            </div>
+            <div class="pipeline-feedback__font-controls">
+              <button class="pipeline-feedback__font-btn" id="chat-zoom-out" title="Decrease font size">A−</button>
+              <button class="pipeline-feedback__font-btn" id="chat-zoom-in" title="Increase font size">A+</button>
+            </div>
+            <button class="pipeline-feedback__toggle" id="pipeline-feedback-toggle" title="收起右侧对话区">⇥</button>
+          </div>
+
+          <div class="pipeline-feedback__content">
+          <div class="pipeline-feedback__node-card">
+            <div class="pipeline-feedback__node-title" id="pipeline-chat-title">Literature Survey</div>
+            <div class="pipeline-feedback__node-meta">
+              <span id="pipeline-chat-agent">Literature Review Agent</span>
+              <span class="pipeline-chat-status is-done" id="pipeline-chat-status">已产出结果</span>
+            </div>
+          </div>
+
+          <div class="pipeline-feedback__messages" id="pipeline-chat-list"></div>
+
+          <div class="pipeline-feedback__composer">
+            <div class="pipeline-feedback__composer-label">针对当前节点给出反馈</div>
+            <div class="pipeline-feedback__textarea-wrap">
+              <textarea id="pipeline-feedback-input" class="pipeline-feedback__textarea" placeholder="例如：补充 2025 年后的工作；增加 H2O/ScissorHands baseline；图 2 改成横向对比布局；把 ratio=0.7 细分成 0.65 / 0.75 再跑一轮..."></textarea>
+              <button id="pipeline-feedback-send" class="pipeline-feedback__send-btn">发送对话...</button>
+            </div>
+            <div class="pipeline-feedback__actions">
+            </div>
+          </div>
+          </div>
+        </aside>
+        </div>
+      </main>
+
+      </div><!-- end main-layout__right -->
+    </div>
+  </div>
+  </div>
+
+  <div class="paper-dialog-overlay hidden" id="paper-dialog-overlay" aria-hidden="true">
+    <div class="paper-dialog" role="dialog" aria-modal="true" aria-labelledby="paper-dialog-title">
+      <button class="paper-dialog__close" id="paper-dialog-close" aria-label="关闭">✕</button>
+
+      <div class="paper-dialog__header">
+        <h2 id="paper-dialog-title" class="paper-dialog__title">
+          上传文献或参考代码
+        </h2>
+      </div>
+
+        <div class="paper-dialog__dropzone">
+          <!-- <div class="paper-dialog__drop-title">或拖放文件</div> -->
+          <div class="paper-dialog__drop-subtitle">PDF或txt或md格式文献， .m或.py格式代码</div>
+          <div class="paper-dialog__drop-subtitle">代码很多的话，请直接粘贴文件夹放置到workspace/项目名称/paper目录下/</div>
+          <div class="paper-dialog__drop-actions">
+            <button class="paper-dialog__drop-btn paper-dialog__drop-btn--primary" id="paper-upload-trigger" type="button">上传文件</button>
+            <input id="paper-upload-input" type="file" multiple accept=".pdf,.txt,.md,.m,.py" class="hidden" />
+          </div>
+          <div class="paper-dialog__quota">
+            <div class="paper-dialog__quota-bar"><span style="width: 14%;"></span></div>
+            <span>7/50</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generate full paper dialog -->
+  <div class="paper-dialog-overlay hidden" id="write-paper-dialog-overlay" aria-hidden="true">
+    <div class="paper-dialog" role="dialog" aria-modal="true" aria-labelledby="write-paper-dialog-title">
+      <button class="paper-dialog__close" id="write-paper-dialog-close" aria-label="关闭">✕</button>
+      <div class="paper-dialog__header">
+        <h2 id="write-paper-dialog-title" class="paper-dialog__title">生成全文</h2>
+      </div>
+      <div class="paper-dialog__body">
+        <div style="margin-bottom:16px;">
+          <label for="paper-title-input" style="display:block;font-size:12px;color:var(--text-2);margin-bottom:6px;">Paper Title</label>
+          <input type="text" id="paper-title-input" placeholder="例如：Proactive Satellite MEC Offloading via Digital Twin" style="width:100%;padding:10px 12px;border:1px solid var(--border-1);border-radius:6px;background:var(--bg-3);color:var(--text-0);font-size:14px;outline:none;box-sizing:border-box;" />
+        </div>
+        <div style="margin-bottom:16px;">
+          <label for="paper-format-input" style="display:block;font-size:12px;color:var(--text-2);margin-bottom:6px;">Paper Format</label>
+          <textarea id="paper-format-input" rows="6" placeholder="描述论文格式要求，例如：IEEE Transactions 双栏格式，含 Abstract、Introduction、Related Work、Methodology、Experiments、Conclusion…" style="width:100%;padding:10px 12px;border:1px solid var(--border-1);border-radius:6px;background:var(--bg-3);color:var(--text-0);font-size:14px;outline:none;box-sizing:border-box;resize:vertical;font-family:inherit;"></textarea>
+        </div>
+        <div style="text-align:right;">
+          <button class="paper-action-btn paper-action-btn--primary" id="write-paper-generate-btn" type="button">Generate PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ideas generate dialog -->
+  <div class="paper-dialog-overlay hidden" id="ideas-dialog-overlay" aria-hidden="true">
+    <div class="paper-dialog" role="dialog" aria-modal="true" aria-labelledby="ideas-dialog-title">
+      <button class="paper-dialog__close" id="ideas-dialog-close" aria-label="关闭">✕</button>
+      <div class="paper-dialog__header">
+        <h2 id="ideas-dialog-title" class="paper-dialog__title">生成创新点</h2>
+      </div>
+      <div class="paper-dialog__body">
+        <div style="margin-bottom:16px;">
+          <label for="ideas-hint-input" style="display:block;font-size:12px;color:var(--text-2);margin-bottom:6px;">生成方向（选填）</label>
+          <input type="text" id="ideas-hint-input" placeholder="生成创新点时的侧重点，例如关注哪些文章、作者、现有代码等等" style="width:100%;padding:10px 12px;border:1px solid var(--border-1);border-radius:6px;background:var(--bg-3);color:var(--text-0);font-size:14px;outline:none;box-sizing:border-box;" />
+        </div>
+        <div style="text-align:right;">
+          <button class="paper-action-btn paper-action-btn--primary" id="ideas-dialog-generate-btn" type="button">开始生成</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add section dialog -->
+  <div class="paper-dialog-overlay hidden" id="section-dialog-overlay" aria-hidden="true">
+    <div class="paper-dialog" role="dialog" aria-modal="true" aria-labelledby="section-dialog-title">
+      <button class="paper-dialog__close" id="section-dialog-close" aria-label="关闭">✕</button>
+      <div class="paper-dialog__header">
+        <h2 id="section-dialog-title" class="paper-dialog__title">增加章节</h2>
+      </div>
+      <div class="paper-dialog__body">
+        <div style="margin-bottom:16px;">
+          <label for="section-title-input" style="display:block;font-size:12px;color:var(--text-2);margin-bottom:6px;">Section Title</label>
+          <input type="text" id="section-title-input" placeholder="例如：Introduction" style="width:100%;padding:10px 12px;border:1px solid var(--border-1);border-radius:6px;background:var(--bg-3);color:var(--text-0);font-size:14px;outline:none;box-sizing:border-box;" />
+        </div>
+        <div style="margin-bottom:16px;">
+          <label for="section-instructions-input" style="display:block;font-size:12px;color:var(--text-2);margin-bottom:6px;">Instructions</label>
+          <textarea id="section-instructions-input" rows="6" placeholder="描述本章节的写作要求、重点内容或特殊说明…" style="width:100%;padding:10px 12px;border:1px solid var(--border-1);border-radius:6px;background:var(--bg-3);color:var(--text-0);font-size:14px;outline:none;box-sizing:border-box;resize:vertical;font-family:inherit;"></textarea>
+        </div>
+        <div style="text-align:right;">
+          <button class="paper-action-btn paper-action-btn--primary" id="section-generate-btn" type="button">开始生成</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Workspace creation dialog -->
+  <div class="paper-dialog-overlay hidden" id="workspace-create-overlay" aria-hidden="true">
+    <div class="paper-dialog" role="dialog" aria-modal="true" aria-labelledby="ws-create-dialog-title">
+      <button class="paper-dialog__close" id="workspace-create-close" aria-label="关闭">✕</button>
+      <div class="paper-dialog__header">
+        <h2 id="ws-create-dialog-title" class="paper-dialog__title">创建新的 Workspace</h2>
+      </div>
+      <div class="paper-dialog__body">
+        <div style="margin-bottom:16px;">
+          <label for="workspace-create-name" style="display:block;font-size:12px;color:var(--text-2);margin-bottom:6px;">Workspace 名称</label>
+          <input type="text" id="workspace-create-name" placeholder="例如：sparse-attention-research" style="width:100%;padding:10px 12px;border:1px solid var(--border-1);border-radius:6px;background:var(--bg-3);color:var(--text-0);font-size:14px;outline:none;box-sizing:border-box;" />
+        </div>
+        <p style="font-size:11px;color:var(--text-3);margin:0 0 16px 0;">
+          系统会在 workspace/ 目录下创建对应的子文件夹，包含 papers/、code/ 等子目录。
+        </p>
+        <div style="text-align:right;">
+          <button class="paper-action-btn paper-action-btn--primary" id="workspace-create-confirm" type="button">创建并进入</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Improve dialog -->
+  <div class="paper-dialog-overlay hidden" id="improve-dialog-overlay" aria-hidden="true">
+    <div class="paper-dialog" role="dialog" aria-modal="true" aria-labelledby="improve-dialog-title">
+      <button class="paper-dialog__close" id="improve-dialog-close" aria-label="关闭">✕</button>
+      <div class="paper-dialog__header">
+        <h2 id="improve-dialog-title" class="paper-dialog__title">持续改进</h2>
+      </div>
+      <div class="paper-dialog__body">
+        <div style="margin-bottom:16px;">
+          <label for="improve-input" style="display:block;font-size:12px;color:var(--text-2);margin-bottom:6px;white-space: pre-line">
+            跟据Review情况输入需要改进的地方，请说明清楚：
+            - 回到哪个步骤，例如从创新点、代码实现还是论文草稿
+            - 需要改动的地方，例如创新点调整、代码添加一组实验还是论文草稿修改某几行的格式
+            - 是否需要自动检查，例如整合到现有的创新点文件中、生成新的实验结果图等等
+            运行状态会同步到右侧对话栏。
+          </label>
+          <textarea id="improve-input" rows="6" placeholder="请输入您的改进建议…" style="width:100%;padding:10px 12px;border:1px solid var(--border-1);border-radius:6px;background:var(--bg-3);color:var(--text-0);font-size:14px;outline:none;box-sizing:border-box;resize:vertical;font-family:inherit;"></textarea>
+        </div>
+        <div style="text-align:right;">
+          <button class="paper-action-btn paper-action-btn--primary" id="improve-submit-btn" type="button">提交建议</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/lib/marked.umd.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
