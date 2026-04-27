@@ -93,4 +93,4 @@ research-agent-ui/
 
 ## 设计理念
 
-岩鼠的设计理念： [](./intro.md) 
+岩鼠的设计理念： [here](./intro.md) 
