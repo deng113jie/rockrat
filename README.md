@@ -74,16 +74,9 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 - **Pipeline** — visual node graph for orchestrating multi-stage research workflows (literature review → experiments → paper writing → review)
 - **Review** — approval ledger and reviewer notes
 
-## Project Structure
+## 视频教程
 
-```
-research-agent-ui/
-├── index.html    # UI layout
-├── app.js        # Frontend interactions
-├── styles.css    # Design system
-├── server.js     # Express backend (file API + agent endpoint)
-└── papers/       # Drop your PDF papers here
-```
+[![安装](https://www.bilibili.com/video/BV1rTomBGEx8/)
 
 
 ## 使用时注意
