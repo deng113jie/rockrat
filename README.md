@@ -3,7 +3,7 @@
 
 A web-based IDE for orchestrating AI-driven research pipelines using Claude Code agents.
 
-![RockRat Main UI](https://github.com/deng113jie/rockrat/blob/master/front_ui.png) 
+![RockRat Main UI](https://github.com/deng113jie/rockrat/blob/master/front_ui.png){width=300 height=200}  
 
 ## Getting Started
 
