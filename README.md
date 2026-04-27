@@ -78,6 +78,7 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
 [![安装教程](https://i2.hdslb.com/bfs/archive/4cb5123a4867a671d490cc142867367d5b53fc03.jpg)](https://www.bilibili.com/video/BV1rTomBGEx8/)
 
+[![使用过程](https://i2.hdslb.com/bfs/archive/e66a8b14f45fbc4e060da28bd4b47130e8f9047a.jpg](https://www.bilibili.com/video/BV1tPdmBHE1y/)
 
 
 
