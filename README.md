@@ -1,6 +1,9 @@
-# ResearchAgent Studio
+# RockRat  岩鼠：舒舒服服做科研 
+![](https://github.com/deng113jie/rockrat/blob/master/icon/rockrat.png)
 
 A web-based IDE for orchestrating AI-driven research pipelines using Claude Code agents.
+
+![RockRat Main UI](https://github.com/deng113jie/rockrat/blob/master/front_ui.png) 
 
 ## Getting Started
 
