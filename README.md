@@ -69,10 +69,14 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Features
 
-- **知识库 (Knowledge Base)** — reads PDF files from the local `./papers` directory; supports upload via drag-and-drop or file picker
-- **开始调研 (Start Research)** — select papers and click this button to run a Claude Code agent that analyses the selected files and streams results back live
+- **知识库 (Knowledge Base)** — reads PDF files from the local `./papers` directory; supports upload via drag-and-drop or file picker. 
+- **开始调研 (Start Research)** — select papers and click this button to run a Claude Code agent that analyses the selected files and streams results back live. Output study.md
 - **Pipeline** — visual node graph for orchestrating multi-stage research workflows (literature review → experiments → paper writing → review)
-- **Review** — approval ledger and reviewer notes
+- **生成创新点** Use idea skill to generate idea.md, which contains few ideas based on related work surveyed.
+- **研究方案** plan.md contains the full research plan, once you adopt 采纳 one of the innovative idea
+- **开始进行编程** The agent shall read the plan.md and start implementation, put results into results.md and generate figures for writting paper
+- **撰写论文** generate latex file into the latex folder with one .tex file per section, and paper.tex as the main file
+- **Review** — approval ledger and reviewer notes in review.md
 
 ## 视频教程
 
