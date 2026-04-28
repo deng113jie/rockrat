@@ -98,6 +98,6 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 - Jifei Xu
 
 Some of the skills are from:
-IEEE Skills(https://github.com/cookjohn/ieee-skills)
-DeepScientist(https://github.com/ResearAI/DeepScientist)
-[Google ScholarPeer](https://arxiv.org/pdf/2601.22638）
+- [IEEE Skills](https://github.com/cookjohn/ieee-skills)
+- [DeepScientist](https://github.com/ResearAI/DeepScientist)
+- [Google ScholarPeer](https://arxiv.org/pdf/2601.22638)
