@@ -411,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function uploadPdfFiles(fileList) {
-    const pdfs = Array.from(fileList || []).filter(f => /\.pdf$/i.test(f.name));
+    const pdfs = Array.from(fileList || []).filter(f => /\.(pdf|txt|md|m|py)$/i.test(f.name));
     if (pdfs.length === 0) return;
     const form = new FormData();
     pdfs.forEach(f => form.append('files', f));

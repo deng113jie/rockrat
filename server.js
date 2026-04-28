@@ -171,10 +171,10 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   fileFilter: (_req, file, cb) => {
-    if (/\.pdf$/i.test(file.originalname)) {
+    if (/\.(pdf|txt|md|m|py)$/i.test(file.originalname)) {
       cb(null, true);
     } else {
-      cb(new Error('Only PDF files are allowed'));
+      cb(new Error('Only PDF, TXT, MD, .m, and .py files are allowed'));
     }
   },
 });
