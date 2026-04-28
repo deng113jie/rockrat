@@ -92,10 +92,10 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 [点我了解一下岩鼠的设计理念](./intro.md) 
 
 ## Contributors and Acknowledgement
-Ye Wang
-Jie Deng
-Rongxiang He
-Jifei Xu
+- Ye Wang
+- Jie Deng
+- Rongxiang He
+- Jifei Xu
 
 Some of the skills are from:
 IEEE Skills(https://github.com/cookjohn/ieee-skills)
