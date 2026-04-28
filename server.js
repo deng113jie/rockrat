@@ -373,7 +373,7 @@ async function runAgent(label, prompt, send, skills = []) {
       if (sessionId) log.debug(`[agent:${label}] loaded sessionId=${sessionId} from .session_id`);
     }
     const queryOptions = {
-      model: "claude-opus-4-7",
+//      model: "claude-opus-4-7",
       allowedTools: [...BASE_TOOLS, "mcp__chrome-devtools__*"],
       mcpServers: {
         "chrome-devtools": {
