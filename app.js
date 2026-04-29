@@ -55,13 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function setStreaming(controller) {
     streamingController = controller;
     const btn = document.getElementById('pipeline-feedback-send');
-    if (btn) btn.textContent = '停止！';
+    if (btn) btn.textContent = '!!!停止！!!';
   }
 
   function clearStreaming() {
     streamingController = null;
     const btn = document.getElementById('pipeline-feedback-send');
-    if (btn) btn.textContent = 'Sending...';
+    if (btn) btn.textContent = '>>>发送>>>';
     clearSelectedSkills();
   }
 

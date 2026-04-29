@@ -82,7 +82,7 @@
     <div class="main-layout">
       <!-- ===== ACTIVITY BAR (leftmost icon strip) ===== -->
       <aside class="activity-bar">
-        <button class="activity-btn active" data-panel="pipeline-nodes" title="Pipeline Nodes">
+        <button class="activity-btn active" data-panel="pipeline-nodes" title="节点书签">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="12" cy="18" r="3"/>
             <line x1="8" y1="8" x2="10.5" y2="15.5"/><line x1="16" y1="8" x2="13.5" y2="15.5"/>
@@ -306,9 +306,9 @@
           <div class="workspace-dashboard">
             <div class="workspace-dashboard__hero">
               <div>
-                <div class="workspace-dashboard__eyebrow">RESEARCH MATERIAL WORKSPACE</div>
-                <h2 class="workspace-dashboard__title">Sparse Attention Optimization / 研究前置备料区</h2>
-                <p class="workspace-dashboard__subtitle">这里不是结果审查页，而是科研流程启动前的资产装配区：集中管理研究主题说明、文献与引用库、方法设计、实验配置、数据资源、草稿骨架、风险缺口与启动条件。</p>
+                <div class="workspace-dashboard__eyebrow">RESEARCH PERCEDURE</div>
+                <h2 class="workspace-dashboard__title">流程区</h2>
+                <p class="workspace-dashboard__subtitle">请点击增加文献开始流程。每个模块会新起Session以缩短Context。Session之间通过MD文件协同</p>
               </div>
               <div class="workspace-dashboard__hero-actions">
               </div>
@@ -952,8 +952,8 @@
         <aside class="pipeline-feedback" id="pipeline-feedback">
           <div class="pipeline-feedback__header">
             <div class="pipeline-feedback__header-text">
-              <div class="pipeline-feedback__title">节点结果对话区</div>
-              <div class="pipeline-feedback__subtitle">系统会把节点产出推送到这里，用户反馈后可触发该节点重新调整并再运行</div>
+              <div class="pipeline-feedback__title">对话区</div>
+              <div class="pipeline-feedback__subtitle">运行记录与发送反馈</div>
             </div>
             <div class="pipeline-feedback__font-controls">
               <button class="pipeline-feedback__font-btn" id="chat-zoom-out" title="Decrease font size">A−</button>
@@ -974,10 +974,10 @@
           <div class="pipeline-feedback__messages" id="pipeline-chat-list"></div>
 
           <div class="pipeline-feedback__composer">
-            <div class="pipeline-feedback__composer-label">针对当前节点给出反馈</div>
+            <div class="pipeline-feedback__composer-label">当下方按钮显示“停止”说明对话仍在进行，请耐心等待。可以点击停止或刷新页面暂停对话</div>
             <div class="pipeline-feedback__textarea-wrap">
-              <textarea id="pipeline-feedback-input" class="pipeline-feedback__textarea" placeholder="例如：补充 2025 年后的工作；增加 H2O/ScissorHands baseline；图 2 改成横向对比布局；把 ratio=0.7 细分成 0.65 / 0.75 再跑一轮..."></textarea>
-              <button id="pipeline-feedback-send" class="pipeline-feedback__send-btn">发送对话...</button>
+              <textarea id="pipeline-feedback-input" class="pipeline-feedback__textarea" placeholder="请提出修改要求。会话已自动保存，可以问我“当前进度如何了，下面需要做什么”对齐一下。"></textarea>
+              <button id="pipeline-feedback-send" class="pipeline-feedback__send-btn">>>>发送>>></button>
             </div>
             <div class="pipeline-feedback__actions">
             </div>
