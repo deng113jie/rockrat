@@ -373,7 +373,7 @@ async function runAgent(label, prompt, send, skills = []) {
       if (sessionId) log.debug(`[agent:${label}] loaded sessionId=${sessionId} from .session_id`);
     }
     const queryOptions = {
-//      model: "claude-opus-4-7",
+      model: "claude-opus-4-7",
       allowedTools: [...BASE_TOOLS, "mcp__chrome-devtools__*"],
       mcpServers: {
         "chrome-devtools": {
@@ -739,11 +739,12 @@ function parseIdeas(content) {
 // Load ideas from idea.md (if it exists) without running the agent
 app.get('/api/ideas/load', (_req, res) => {
   const ideaMdPath = path.join(getBaseDir(), 'idea.md');
-  if (!fs.existsSync(ideaMdPath)) return res.json({ ideas: [] });
+  const ideaMdExists = fs.existsSync(ideaMdPath);
+  if (!ideaMdExists) return res.json({ ideas: [], ideaMdExists: false });
   try {
     const content = fs.readFileSync(ideaMdPath, 'utf-8');
     const ideas = parseIdeas(content);
-    res.json({ ideas });
+    res.json({ ideas, ideaMdExists: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -1329,7 +1330,7 @@ Produce the following in \`results/\`:
 - \`code/README.md\` — reproduction instructions
 
 **Result Reporting to Team:**
-Save a summary to \`research/results_summary.md\` with:
+Save a summary to \`results.md\` with:
 - Table of main results (copy of \`main_table.csv\` in markdown)
 - Key finding in one sentence
 - Paths to all figures and detailed result files

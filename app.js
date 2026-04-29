@@ -178,11 +178,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function showIdeasFileFallback() {
+    const topicsCard = document.getElementById('asset-target-topics');
+    if (!topicsCard) return;
+    const body = topicsCard.querySelector('.workspace-card__body');
+    if (!body) return;
+    body.style.cssText = 'min-height:80px;display:flex;align-items:center;justify-content:center';
+    body.innerHTML = `
+      <div id="idea-file-icon" title="Double-click to open idea.md" style="display:inline-flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:12px 16px;border-radius:6px;transition:background 0.15s">
+        <img src="./icon/md_icon.png" style="width:36px;height:36px;object-fit:contain" alt="md">
+        <span style="font-size:11px;color:var(--text-2)">idea.md</span>
+      </div>`;
+    const icon = document.getElementById('idea-file-icon');
+    icon.addEventListener('mouseenter', () => { icon.style.background = 'var(--hover-bg, rgba(255,255,255,0.06))'; });
+    icon.addEventListener('mouseleave', () => { icon.style.background = ''; });
+    icon.addEventListener('dblclick', () => {
+      fetch('/api/open-file', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file: 'idea.md' }),
+      });
+    });
+  }
+
   async function checkAndRestoreIdeasCard() {
     try {
       const res = await fetch('/api/ideas/load');
       const data = await res.json();
-      if (data.ideas && data.ideas.length > 0) showIdeasCard(data.ideas);
+      if (data.ideas && data.ideas.length > 0) {
+        showIdeasCard(data.ideas);
+      } else if (data.ideaMdExists) {
+        showIdeasFileFallback();
+      }
     } catch (_) {}
   }
 
@@ -1561,7 +1588,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (msg.type === 'done') {
       liveMessageBodyEl   = null;
       liveMessageParentEl = null;
-      if (chatStatusEl && label !== 'feedback') {
+      // Only update to '已产出结果' if no fetch-stream is active.
+      // The SSE 'done' from broadcastAgentEvent arrives before the
+      // fetch stream has finished reading, so we must not overwrite
+      // the '运行中' status that the fetch handler maintains.
+      if (chatStatusEl && label !== 'feedback' && !streamingController) {
         chatStatusEl.textContent = '已产出结果';
         chatStatusEl.className   = 'pipeline-chat-status is-done';
       }
