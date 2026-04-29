@@ -89,6 +89,8 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 ## 使用时注意
 
 - 如果需要agent自动使用IEEE Xplore，请1)安装chrome, 2) 在chrome中输入 chrome://inspect/#remote-debugging  启用远程调试， 3）打开IEEE Xplore并登录
+- 中间的按钮，例如开始调研、开始编程等会新起一个独立的session；右边的对话框会延续之前的session。因此，如果不小心关闭了浏览器，或者刷新了页面，导致右边对话框信息丢失，就在对话框中输入“tell me what's the status now, and continue please"就可以延续session。
+- 当前session_id在.session_id文件中，所有会话都保存在.session中，可以搜索
 - 有任何问题，可以联系（wx:wayfull001）
 
 ## 设计理念
