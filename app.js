@@ -213,6 +213,24 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (_) {}
   }
 
+  async function checkAndRestoreSessionHistory() {
+    const chatListEl = document.getElementById('pipeline-chat-list');
+    if (chatListEl) chatListEl.innerHTML = '';
+    try {
+      const resp = await fetch('/api/session-history');
+      if (!resp.ok) return;
+      const { events } = await resp.json();
+      if (!events || events.length === 0) return;
+      pushAgentEventToChat('history', { type: 'start' });
+      for (const event of events) {
+        pushAgentEventToChat('history', event);
+      }
+      pushAgentEventToChat('history', { type: 'done' });
+    } catch (e) {
+      console.warn('[session-history] failed to load:', e);
+    }
+  }
+
   function openWorkspaceShell(workspaceName = 'New Research Workspace') {
     if (workspaceHub) workspaceHub.classList.add('hidden');
     if (workbenchShell) workbenchShell.classList.remove('hidden');
@@ -271,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await checkAndRestoreLiteratureCard();
         await checkAndRestoreIdeasCard();
         await checkAndRestorePlanCard();
+        await checkAndRestoreSessionHistory();
       });
     });
 
@@ -308,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadWorkspaceList();
         openWorkspaceShell(data.name);
         await refreshPaperList();
+        await checkAndRestoreSessionHistory();
       } else {
         alert(data.error || '创建失败');
       }
@@ -1502,6 +1522,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'write-paper':   { title: '生成全文',  agent: 'Paper Compiler' },
     'review':        { title: 'AI审稿',   agent: 'AI Reviewer' },
     'feedback':      { title: '反馈处理',  agent: 'Feedback Agent' },
+    'history':       { title: '历史会话',  agent: 'Agent' },
   };
 
   // Live message elements for the current stream

@@ -355,6 +355,30 @@ const BASE_TOOLS = ['Bash', 'Glob', 'Read', 'Edit', 'Write', 'Grep', 'Skill'];
 // Global session ID: captured from non-feedback agents, reused by feedback to resume the conversation
 let sessionId = null;
 
+// Token rate limiter: max 500 output tokens per minute; if exceeded, sleep 30s
+const tokenWindow = { count: 0, windowStart: Date.now() };
+const TOKEN_LIMIT = 500;
+const TOKEN_WINDOW_MS = 60_000;
+const RATE_LIMIT_SLEEP_MS = 30_000;
+
+async function checkTokenRateLimit(newTokens, label, send) {
+  const now = Date.now();
+  if (now - tokenWindow.windowStart >= TOKEN_WINDOW_MS) {
+    tokenWindow.count = 0;
+    tokenWindow.windowStart = now;
+  }
+  tokenWindow.count += newTokens;
+  if (tokenWindow.count >= TOKEN_LIMIT) {
+    log.warn(`[agent:${label}] token rate limit reached (${tokenWindow.count} tokens in window), sleeping ${RATE_LIMIT_SLEEP_MS / 1000}s`);
+    const obj = { type: 'system', subtype: 'rate_limit', text: `Token rate limit reached — pausing ${RATE_LIMIT_SLEEP_MS / 1000}s before continuing…` };
+    send(obj);
+    broadcastAgentEvent(label, obj);
+    await new Promise(r => setTimeout(r, RATE_LIMIT_SLEEP_MS));
+    tokenWindow.count = 0;
+    tokenWindow.windowStart = Date.now();
+  }
+}
+
 async function runAgent(label, prompt, send, skills = []) {
   const ctx = get_context();
   /*prompt = set_context(ctx, prompt);*/
@@ -388,9 +412,19 @@ async function runAgent(label, prompt, send, skills = []) {
       permissionMode: "auto",
       ...(isFeedback && sessionId ? { resume: sessionId } : {}),
     };
+    const seenMsgIds = new Set();
     for await (const message of query({ prompt, options: queryOptions })) {
       log.debug(`[agent:${label}] message: ${JSON.stringify(message)}`);
       update_session(prompt, message);
+      // Count tokens once per unique message ID (parallel tool calls share the same ID)
+      if (message.type === 'assistant' && message.message?.id) {
+        const msgId = message.message.id;
+        if (!seenMsgIds.has(msgId)) {
+          seenMsgIds.add(msgId);
+          const outTokens = message.message.usage?.output_tokens ?? 0;
+          await checkTokenRateLimit(outTokens, label, send);
+        }
+      }
       // Capture session ID from non-feedback agents so feedback can resume it
       if (!isFeedback && message.session_id ) {  // refresh the session ID
         sessionId = message.session_id;
@@ -1404,6 +1438,56 @@ app.get('/api/skills', (_req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// Return session history events for the current workspace's last session
+app.get('/api/session-history', (req, res) => {
+  const baseDir = getBaseDir();
+  const sessionIdFile = path.join(baseDir, '.session_id');
+  const sessionFile = path.join(baseDir, '.session');
+
+  let savedSessionId;
+  try { savedSessionId = fs.readFileSync(sessionIdFile, 'utf-8').trim(); } catch { return res.json({ events: [] }); }
+  if (!savedSessionId) return res.json({ events: [] });
+
+  let entries;
+  try {
+    const raw = fs.readFileSync(sessionFile, 'utf-8').trim();
+    entries = raw ? JSON.parse(raw) : [];
+  } catch { return res.json({ events: [] }); }
+
+  const SKIP_SUBTYPES = new Set(['hook_started', 'hook_response', 'init']);
+  const events = [];
+
+  for (const entry of entries) {
+    const msg = entry.message;
+    if (!msg || msg.session_id !== savedSessionId) continue;
+
+    if ('result' in msg) {
+      events.push({ type: 'result', text: msg.result });
+    } else if (msg.type === 'assistant') {
+      for (const block of msg.message?.content ?? []) {
+        if (block.type === 'text' && block.text) {
+          events.push({ type: 'assistant', text: block.text });
+        }
+      }
+    } else if ('output' in msg) {
+      const text = Array.isArray(msg.output) ? msg.output.join('\n') : msg.output;
+      if (text) events.push({ type: 'text', text });
+    } else if (msg.type === 'system' && !SKIP_SUBTYPES.has(msg.subtype)) {
+      let text;
+      if (msg.subtype === 'api_retry') {
+        const statusPart = msg.error_status ? ` (HTTP ${msg.error_status})` : '';
+        text = `API error${statusPart} — retrying ${msg.attempt}/${msg.max_retries}…`;
+      } else {
+        text = [msg.message].filter(Boolean).join(' ') || JSON.stringify(msg);
+      }
+      events.push({ type: 'system', subtype: msg.subtype || '', text });
+    }
+    // skip type === 'user' (tool results) — too verbose for history replay
+  }
+
+  res.json({ events });
 });
 
 app.listen(PORT,'0.0.0.0', () => {
