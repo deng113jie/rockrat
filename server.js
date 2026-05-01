@@ -380,12 +380,12 @@ async function checkTokenRateLimit(newTokens, label, send) {
 }
 
 async function runAgent(label, prompt, send, skills = []) {
-  const ctx = get_context();
-  /*prompt = set_context(ctx, prompt);*/
+  /*const ctx = get_context();
+  prompt = set_context(ctx, prompt);*/
   if (skills.length > 0) {
     prompt = prompt + `\n\nUse the those skills see if it could help with this task: ${skills.join(', ')}`;
   }
-  log.debug(`[agent:${label}] prompt:\n${prompt}`);
+  
   const isFeedback = label === 'feedback';
   if (!isFeedback) broadcastAgentEvent(label, { type: 'start' });
   try {
@@ -394,8 +394,14 @@ async function runAgent(label, prompt, send, skills = []) {
     const sessionIdFile = path.join(getBaseDir(), '.session_id');
     if (isFeedback && !sessionId) {  // only load session if feedback api
       try { sessionId = fs.readFileSync(sessionIdFile, 'utf8').trim() || null; } catch { /* file absent */ }
-      if (sessionId) log.debug(`[agent:${label}] loaded sessionId=${sessionId} from .session_id`);
+      if (sessionId) {
+        log.debug(`[agent:${label}] loaded sessionId=${sessionId} from .session_id`);
+      } else {
+        prompt = `You are an experienced research that conducting research process, first read the CLAUDE.md from root folder for details,
+        and then keep in mind the current project is under ${getBaseDir()}. ` + prompt;
+      }
     }
+    log.debug(`[agent:${label}] prompt:\n${prompt}`);
     const queryOptions = {
       model: "claude-opus-4-7",
       allowedTools: [...BASE_TOOLS, "mcp__chrome-devtools__*"],
@@ -426,7 +432,7 @@ async function runAgent(label, prompt, send, skills = []) {
         }
       }
       // Capture session ID from non-feedback agents so feedback can resume it
-      if (!isFeedback && message.session_id ) {  // refresh the session ID
+      if (message.session_id ) {  // refresh the session ID
         sessionId = message.session_id;
         log.debug(`[agent:${label}] captured sessionId=${sessionId}`);
         try { fs.writeFileSync(sessionIdFile, sessionId, 'utf8'); } catch (e) { log.warn(`[agent:${label}] failed to write .session_id: ${e.message}`); }
@@ -1234,6 +1240,20 @@ app.post('/api/open-file', (req, res) => {
   if (!file) return res.status(400).json({ error: 'file required' });
   // Accept absolute paths (from /api/code-files) or resolve relative ones against baseDir
   const filePath = path.isAbsolute(file) ? file : path.join(getBaseDir(), file);
+  const { spawn } = require('child_process');
+  let child;
+  if (process.platform === 'win32') {
+    child = spawn('cmd.exe', ['/c', 'start', '""', filePath], { detached: true, stdio: 'ignore' });
+  } else {
+    const opener = process.platform === 'darwin' ? 'open' : 'xdg-open';
+    child = spawn(opener, [filePath], { detached: true, stdio: 'ignore' });
+  }
+  child.unref();
+  res.json({ ok: true });
+});
+
+app.post('/api/open-claude-md', (_req, res) => {
+  const filePath = path.join(__dirname, 'CLAUDE.md');
   const { spawn } = require('child_process');
   let child;
   if (process.platform === 'win32') {

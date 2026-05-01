@@ -89,6 +89,7 @@ input { font-family: inherit; border: none; background: none; color: inherit; ou
 }
 
 .workspace-hub__hero {
+  position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -128,6 +129,25 @@ input { font-family: inherit; border: none; background: none; color: inherit; ou
   background: var(--accent);
   color: var(--bg-0);
   font-weight: 700;
+}
+
+.workspace-hub__edit-claude-md {
+  position: absolute;
+  bottom: 14px;
+  right: 16px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+}
+
+.workspace-hub__edit-claude-md:hover {
+  background: var(--bg-1);
+  color: var(--text-1);
 }
 
 .workspace-hub__toolbar {

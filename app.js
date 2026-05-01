@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const workbenchShell = document.getElementById('workbench-shell');
   const workspaceEntries = document.querySelectorAll('[data-open-workspace]');
   const workspaceCreateBtn = document.getElementById('workspace-create-btn');
+  const editClaudeMdBtn = document.getElementById('edit-claude-md-btn');
   const wsCreateOverlay = document.getElementById('workspace-create-overlay');
   const wsCreateInput = document.getElementById('workspace-create-name');
   const wsCreateConfirmBtn = document.getElementById('workspace-create-confirm');
@@ -338,6 +339,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (workspaceCreateBtn) {
     workspaceCreateBtn.addEventListener('click', () => showCreateWorkspaceDialog());
+  }
+
+  if (editClaudeMdBtn) {
+    editClaudeMdBtn.addEventListener('click', () => {
+      fetch('/api/open-claude-md', { method: 'POST' }).catch(() => {});
+    });
   }
 
   if (wsCreateConfirmBtn) {
