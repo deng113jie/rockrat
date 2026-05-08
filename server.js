@@ -379,7 +379,7 @@ async function checkTokenRateLimit(newTokens, label, send) {
   }
 }
 
-async function runAgent(label, prompt, send, skills = [], model = 'claude-opus-4-6') {
+async function runAgent(label, prompt, send, skills = [], model = 'claude-sonnet-4-6') {
   /*const ctx = get_context();
   prompt = set_context(ctx, prompt);*/
   if (skills.length > 0) {
@@ -505,7 +505,7 @@ app.post('/api/learn', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { papers = [], skills = [], model = 'claude-opus-4-6' } = req.body;
+  const { papers = [], skills = [], model = 'claude-sonnet-4-6' } = req.body;
   const paperList = papers.length > 0
     ? 'Look into those files from the folder: '+ papers.map(p => `- ${p}`).join('\n')
     : '';
@@ -574,7 +574,7 @@ app.post('/api/feedback', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { prompt: userMessage = '', nodeTitle = '', skills = [], model = 'claude-opus-4-6' } = req.body;
+  const { prompt: userMessage = '', nodeTitle = '', skills = [], model = 'claude-sonnet-4-6' } = req.body;
   const baseDir = getBaseDir();
 
   /*const prompt = [
@@ -616,7 +616,7 @@ app.post('/api/ideas', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { skills = [], userHint = '', model = 'claude-opus-4-6' } = req.body;
+  const { skills = [], userHint = '', model = 'claude-sonnet-4-6' } = req.body;
   const baseDir = getBaseDir();
   const prompt = `You are an expert academic research surveyor specializing in research ideation.
   Your role is to comprehensively identify research gaps, and propose novel research ideas to drive forward a collaborative research project.
@@ -806,7 +806,7 @@ app.post('/api/adopt', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { userMessage = '', skills = [], model = 'claude-opus-4-6' } = req.body;
+  const { userMessage = '', skills = [], model = 'claude-sonnet-4-6' } = req.body;
   const baseDir = getBaseDir();
 
   const prompt = `You are an expert research methodology and evaluation design specialist. Your role is to translate raw research ideas (provided by the survey agent) into rigorous, reproducible, end-to-end experimental plans that will produce results convincing to top-venue reviewers.
@@ -900,7 +900,7 @@ app.post('/api/write_section', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { sectionTitle = '', instruction = '', skills = [], model = 'claude-opus-4-6' } = req.body;
+  const { sectionTitle = '', instruction = '', skills = [], model = 'claude-sonnet-4-6' } = req.body;
   if (!sectionTitle.trim()) {
     send({ type: 'error', message: 'sectionTitle is required' });
     return res.end();
@@ -1043,7 +1043,7 @@ app.post('/api/write-paper', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { paperTitle = '', paperFormat = '', skills = [], model = 'claude-opus-4-6' } = req.body;
+  const { paperTitle = '', paperFormat = '', skills = [], model = 'claude-sonnet-4-6' } = req.body;
   if (!paperTitle.trim()) {
     send({ type: 'error', message: 'paperTitle is required' });
     return res.end();
@@ -1096,7 +1096,7 @@ app.post('/api/review', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { skills = [], model = 'claude-opus-4-6' } = req.body || {};
+  const { skills = [], model = 'claude-sonnet-4-6' } = req.body || {};
   const baseDir = getBaseDir();
   const pdfPath = path.join(baseDir, 'latex', 'paper.pdf');
   const prompt = `
@@ -1157,7 +1157,7 @@ app.post('/api/improve', async (req, res) => {
   res.flushHeaders();
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
-  const { userResponse = '', skills = [], model = 'claude-opus-4-6' } = req.body;
+  const { userResponse = '', skills = [], model = 'claude-sonnet-4-6' } = req.body;
   const baseDir = getBaseDir();
   const prompt = [
     `You are an experienced researcher and research journal editor. 
@@ -1301,7 +1301,7 @@ app.post('/api/coding', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { skills = [], model = 'claude-opus-4-6' } = req.body || {};
+  const { skills = [], model = 'claude-sonnet-4-6' } = req.body || {};
   const baseDir = getBaseDir();
   /*
   const prompt = `You are a helpful coding agent, please start coding.
