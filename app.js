@@ -571,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch('/api/write_section', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sectionTitle, instruction, skills: getSelectedSkills() }),
+          body: JSON.stringify({ sectionTitle, instruction, skills: getSelectedSkills(), model: getSelectedModel() }),
           signal: controller.signal,
         });
         if (!res.body) throw new Error('No response body');
@@ -683,7 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch('/api/improve', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userResponse, skills: getSelectedSkills() }),
+          body: JSON.stringify({ userResponse, skills: getSelectedSkills(), model: getSelectedModel() }),
           signal: controller.signal,
         });
         if (!res.body) throw new Error('No response body');
@@ -745,7 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch('/api/write-paper', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ paperTitle, paperFormat, skills: getSelectedSkills() }),
+          body: JSON.stringify({ paperTitle, paperFormat, skills: getSelectedSkills(), model: getSelectedModel() }),
           signal: controller.signal,
         });
         if (!res.body) throw new Error('No response body');
@@ -846,7 +846,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch('/api/learn', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ papers: selectedPapers, skills: getSelectedSkills() }),
+          body: JSON.stringify({ papers: selectedPapers, skills: getSelectedSkills(), model: getSelectedModel() }),
           signal: controller.signal,
         });
 
@@ -918,7 +918,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch('/api/adopt', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userMessage, skills: getSelectedSkills() }),
+          body: JSON.stringify({ userMessage, skills: getSelectedSkills(), model: getSelectedModel() }),
           signal: controller.signal,
         });
 
@@ -991,7 +991,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch('/api/ideas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userHint, skills: getSelectedSkills() }),
+        body: JSON.stringify({ userHint, skills: getSelectedSkills(), model: getSelectedModel() }),
         signal: controller.signal,
       });
 
@@ -1212,7 +1212,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch('/api/coding', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ skills: getSelectedSkills() }),
+          body: JSON.stringify({ skills: getSelectedSkills(), model: getSelectedModel() }),
           signal: controller.signal,
         });
 
@@ -1290,7 +1290,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const controller = new AbortController();
       setStreaming(controller);
       try {
-        const res = await fetch('/api/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skills: getSelectedSkills() }), signal: controller.signal });
+        const res = await fetch('/api/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ skills: getSelectedSkills(), model: getSelectedModel() }), signal: controller.signal });
         if (!res.body) throw new Error('No response body');
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
@@ -1956,7 +1956,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch('/api/feedback', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: text, nodeTitle: nodeData.title, skills: getSelectedSkills() }),
+          body: JSON.stringify({ prompt: text, nodeTitle: nodeData.title, skills: getSelectedSkills(), model: getSelectedModel() }),
           signal: controller.signal,
         });
 
@@ -2378,6 +2378,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function getSelectedSkills() {
     return Array.from(document.querySelectorAll('#skills-list .skill-checkbox:checked'))
       .map(cb => cb.dataset.skillId);
+  }
+
+  // --- Model: read currently selected model from titlebar dropdown ---
+  function getSelectedModel() {
+    const sel = document.getElementById('model-select');
+    return sel?.value || 'claude-opus-4-6';
   }
 
   function clearSelectedSkills() {

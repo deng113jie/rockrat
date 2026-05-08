@@ -5,7 +5,7 @@ const fs = require('fs');
 var log = require('loglevel');
 log.setLevel(process.env.LOG_LEVEL || 'info');
 require('dotenv').config();
-//console.log(process.env.ANTHROPIC_AUTH_TOKEN)
+console.log(process.env.ANTHROPIC_BASE_URL)
 
 const app = express();
 app.use(express.json());
@@ -379,7 +379,7 @@ async function checkTokenRateLimit(newTokens, label, send) {
   }
 }
 
-async function runAgent(label, prompt, send, skills = []) {
+async function runAgent(label, prompt, send, skills = [], model = 'claude-opus-4-6') {
   /*const ctx = get_context();
   prompt = set_context(ctx, prompt);*/
   if (skills.length > 0) {
@@ -402,8 +402,9 @@ async function runAgent(label, prompt, send, skills = []) {
       }
     }
     log.debug(`[agent:${label}] prompt:\n${prompt}`);
+    log.debug(`[agent:${label}] using model=${model}`);
     const queryOptions = {
-      model: "claude-opus-4-7",
+      model,
       allowedTools: [...BASE_TOOLS, "mcp__chrome-devtools__*"],
       mcpServers: {
         "chrome-devtools": {
@@ -504,7 +505,7 @@ app.post('/api/learn', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { papers = [], skills = [] } = req.body;
+  const { papers = [], skills = [], model = 'claude-opus-4-6' } = req.body;
   const paperList = papers.length > 0
     ? 'Look into those files from the folder: '+ papers.map(p => `- ${p}`).join('\n')
     : '';
@@ -556,7 +557,7 @@ Produce a structured report ${studyMdPath} containing:
   `
 
   try {
-    await runAgent('learn', prompt, send, skills);
+    await runAgent('learn', prompt, send, skills, model);
     send({ type: 'done' });
   } catch (err) {
     send({ type: 'error', message: err.message });
@@ -573,7 +574,7 @@ app.post('/api/feedback', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { prompt: userMessage = '', nodeTitle = '', skills = [] } = req.body;
+  const { prompt: userMessage = '', nodeTitle = '', skills = [], model = 'claude-opus-4-6' } = req.body;
   const baseDir = getBaseDir();
 
   /*const prompt = [
@@ -596,7 +597,7 @@ app.post('/api/feedback', async (req, res) => {
     Respond concisely and helpfully. If the instruction requires code or file changes, make them in the workspace directory
   `
   try {
-    await runAgent('feedback', prompt, send, skills);
+    await runAgent('feedback', prompt, send, skills, model);
     send({ type: 'done' });
   } catch (err) {
     send({ type: 'error', message: err.message });
@@ -615,7 +616,7 @@ app.post('/api/ideas', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { skills = [], userHint = '' } = req.body;
+  const { skills = [], userHint = '', model = 'claude-opus-4-6' } = req.body;
   const baseDir = getBaseDir();
   const prompt = `You are an expert academic research surveyor specializing in research ideation.
   Your role is to comprehensively identify research gaps, and propose novel research ideas to drive forward a collaborative research project.
@@ -715,7 +716,7 @@ Because satellite orbital mechanics are fully deterministic (governed by Kepleri
   */
 
   try {
-    await runAgent('ideas', prompt, send, skills);
+    await runAgent('ideas', prompt, send, skills, model);
     // Parse idea.md and send structured ideas before done
     const ideaMdPath = path.join(getBaseDir(), 'idea.md');
     if (fs.existsSync(ideaMdPath)) {
@@ -805,7 +806,7 @@ app.post('/api/adopt', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { userMessage = '', skills = [] } = req.body;
+  const { userMessage = '', skills = [], model = 'claude-opus-4-6' } = req.body;
   const baseDir = getBaseDir();
 
   const prompt = `You are an expert research methodology and evaluation design specialist. Your role is to translate raw research ideas (provided by the survey agent) into rigorous, reproducible, end-to-end experimental plans that will produce results convincing to top-venue reviewers.
@@ -880,7 +881,7 @@ Here goes the finalized research idea: ${userMessage}
 `; */
 
       try {
-    await runAgent('adopt', prompt, send, skills);
+    await runAgent('adopt', prompt, send, skills, model);
     send({ type: 'done' });
   } catch (err) {
     send({ type: 'error', message: err.message });
@@ -899,7 +900,7 @@ app.post('/api/write_section', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { sectionTitle = '', instruction = '', skills = [] } = req.body;
+  const { sectionTitle = '', instruction = '', skills = [], model = 'claude-opus-4-6' } = req.body;
   if (!sectionTitle.trim()) {
     send({ type: 'error', message: 'sectionTitle is required' });
     return res.end();
@@ -1024,7 +1025,7 @@ latex/
   `;
 
   try {
-    await runAgent('write_section', prompt, send, skills);
+    await runAgent('write_section', prompt, send, skills, model);
     send({ type: 'done' });
   } catch (err) {
     send({ type: 'error', message: err.message });
@@ -1042,7 +1043,7 @@ app.post('/api/write-paper', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { paperTitle = '', paperFormat = '', skills = [] } = req.body;
+  const { paperTitle = '', paperFormat = '', skills = [], model = 'claude-opus-4-6' } = req.body;
   if (!paperTitle.trim()) {
     send({ type: 'error', message: 'paperTitle is required' });
     return res.end();
@@ -1077,7 +1078,7 @@ If there is anything missing, but required by the template, e.g. abstract, gener
 `;
 
   try {
-    await runAgent('write-paper', prompt, send, skills);
+    await runAgent('write-paper', prompt, send, skills, model);
     send({ type: 'done' });
   } catch (err) {
     send({ type: 'error', message: err.message });
@@ -1095,7 +1096,7 @@ app.post('/api/review', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { skills = [] } = req.body || {};
+  const { skills = [], model = 'claude-opus-4-6' } = req.body || {};
   const baseDir = getBaseDir();
   const pdfPath = path.join(baseDir, 'latex', 'paper.pdf');
   const prompt = `
@@ -1139,7 +1140,7 @@ app.post('/api/review', async (req, res) => {
   `;
 
   try {
-    await runAgent('review', prompt, send, skills);
+    await runAgent('review', prompt, send, skills, model);
     send({ type: 'done' });
   } catch (err) {
     send({ type: 'error', message: err.message });
@@ -1156,7 +1157,7 @@ app.post('/api/improve', async (req, res) => {
   res.flushHeaders();
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
-  const { userResponse = '', skills = [] } = req.body;
+  const { userResponse = '', skills = [], model = 'claude-opus-4-6' } = req.body;
   const baseDir = getBaseDir();
   const prompt = [
     `You are an experienced researcher and research journal editor. 
@@ -1174,7 +1175,7 @@ app.post('/api/improve', async (req, res) => {
 
 
   try {
-    await runAgent('improve', prompt, send, skills);
+    await runAgent('improve', prompt, send, skills, model);
     send({ type: 'done' });
   } catch (err) {
     send({ type: 'error', message: err.message });
@@ -1300,7 +1301,7 @@ app.post('/api/coding', async (req, res) => {
 
   const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
 
-  const { skills = [] } = req.body || {};
+  const { skills = [], model = 'claude-opus-4-6' } = req.body || {};
   const baseDir = getBaseDir();
   /*
   const prompt = `You are a helpful coding agent, please start coding.
@@ -1424,7 +1425,7 @@ import torch
 \`\`\`
   `
   try {
-    await runAgent('coding', prompt, send, skills);
+    await runAgent('coding', prompt, send, skills, model);
     send({ type: 'done' });
   } catch (err) {
     send({ type: 'error', message: err.message });

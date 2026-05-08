@@ -397,6 +397,47 @@ input { font-family: inherit; border: none; background: none; color: inherit; ou
   color: var(--text-2);
 }
 
+.model-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-2);
+}
+
+.model-selector__label {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-3, var(--text-2));
+}
+
+.model-selector__select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--bg-3);
+  color: var(--text-0);
+  border: 1px solid var(--border-1);
+  border-radius: 4px;
+  padding: 3px 22px 3px 8px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238a8f99' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+}
+
+.model-selector__select:hover {
+  border-color: var(--accent, #f0b429);
+  color: var(--text-0);
+}
+
+.model-selector__select:focus {
+  border-color: var(--accent, #f0b429);
+}
+
 .status-dot {
   width: 7px; height: 7px;
   border-radius: 50%;

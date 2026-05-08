@@ -69,6 +69,16 @@
         </div>
       </div>
       <div class="titlebar__right">
+        <label class="model-selector" title="选择调用 API 时使用的模型">
+          <span class="model-selector__label">Model</span>
+          <select id="model-select" class="model-selector__select">
+            <option value="claude-opus-4-6" selected>claude-opus-4-6</option>
+            <option value="claude-sonnet-4-6">claude-sonnet-4-6</option>
+            <option value="claude-opus-4-7">claude-opus-4-7</option>
+            <option value="deepseek-v4-pro">deepseek-v4-pro</option>
+            <option value="deepseek-v4-flash">deepseek-v4-flash</option>
+          </select>
+        </label>
         <div class="status-indicator status-indicator--running">
           <span class="status-dot"></span>
           <span>3 agents running</span>
