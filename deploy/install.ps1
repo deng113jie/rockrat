@@ -67,6 +67,11 @@ if (-not (Test-Command "npm")) {
     exit 1
 }
 
+# ── npm registry mirror ────────────────────────────────────────────────────────
+Write-Step "Setting npm registry to npmmirror..."
+npm config set registry http://registry.npmmirror.com
+Write-OK "npm registry set to http://registry.npmmirror.com"
+
 # ── 4. Claude Code CLI ─────────────────────────────────────────────────────────
 Write-Step "Checking Claude Code CLI..."
 if (Test-Command "claude") {
