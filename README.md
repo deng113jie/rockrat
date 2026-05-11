@@ -5,10 +5,27 @@ A web-based IDE for orchestrating AI-driven research pipelines using Claude Code
 ![RockRat Main UI](https://github.com/deng113jie/rockrat/blob/master/front_ui.png)
 
 
-## Getting Started
+## Getting Started(Windows)
 
-### 1. Install Node.js
+### 1. 下载项目
 
+
+```
+https://github.com/deng113jie/rockrat/archive/refs/heads/master.zip
+```
+### 2. 安装
+
+解压项目后，双击项目目录/deploy/install.bat
+
+Then open [http://localhost:3000](http://localhost:3000) in your browser.
+
+
+## Getting Started(Linux/MacOS)
+
+### 1. Download the project 
+```
+https://github.com/deng113jie/rockrat/archive/refs/heads/master.zip
+```
 Download and install Node.js (v18 or later) from [nodejs.org](https://nodejs.org).
 
 Verify the installation using bash or cmd (Windows: 开始，搜索/输入 cmd ， 点击“命令提示符”):
